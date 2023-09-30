@@ -10,25 +10,39 @@ assessmentButton.onclick = () => {
     // 名前が空の時は処理を終了する
     return;
   }
+
+  // 診断結果表示エリアの作成
+  resultDivision.innerText = '';
   
-   // 診断結果表示エリアの作成
-   resultDivision.innerText='';
-   const header = document.createElement('h3');
-   header.innerText = '診断結果';
-   resultDivision.appendChild(header);
- 
-   const paragraph = document.createElement('p');
-   const result = assessment(userName);
-   paragraph.innerText = result;
-   resultDivision.appendChild(paragraph);
- 
+  // headerDivision の作成
+  const headerDivision = document.createElement('div');
+  headerDivision.setAttribute('class', 'card-header text-bg-primary');
+  headerDivision.innerText = '診断結果';
+
+  // bodyDivision の作成
+  const bodyDivision = document.createElement('div');
+  bodyDivision.setAttribute('class', 'card-body');
+
+  const paragraph = document.createElement('p');
+  paragraph.setAttribute('class', 'card-text');
+  const result = assessment(userName);
+  paragraph.innerText = result;
+  bodyDivision.appendChild(paragraph);
+
+  // resultDivision に Bootstrap のスタイルを適用する
+  resultDivision.setAttribute('class', 'card');
+
+  // headerDivision と bodyDivision を resultDivision に差し込む
+  resultDivision.appendChild(headerDivision);
+  resultDivision.appendChild(bodyDivision);
+
   // ツイートエリアの作成
   tweetDivision.innerText = '';
   const anchor = document.createElement('a');
   const hrefValue =
-  'https://twitter.com/intent/tweet?button_hashtag=' +
-  encodeURIComponent('あなたのいいところ') +
-  '&ref_src=twsrc%5Etfw';
+    'https://twitter.com/intent/tweet?button_hashtag=' +
+    encodeURIComponent('あなたのいいところ') +
+    '&ref_src=twsrc%5Etfw';
 
   anchor.setAttribute('href', hrefValue);
   anchor.setAttribute('class', 'twitter-hashtag-button');
@@ -38,7 +52,7 @@ assessmentButton.onclick = () => {
   tweetDivision.appendChild(anchor);
 
   const script = document.createElement('script');
-  script.setAttribute('src','https://platform.twitter.com/widgets.js');
+  script.setAttribute('src', 'https://platform.twitter.com/widgets.js');
   tweetDivision.appendChild(script);
 };
 
@@ -48,7 +62,7 @@ userNameInput.onkeydown = event => {
   }
 };
 
-const answers=[
+const answers = [
   '###userName###のいいところは声です。###userName###の特徴的な声は皆を惹きつけ、心に残ります。',
   '###userName###のいいところはまなざしです。###userName###に見つめられた人は、気になって仕方がないでしょう。',
   '###userName###のいいところは情熱です。###userName###の情熱に周りの人は感化されます。',
@@ -64,36 +78,37 @@ const answers=[
   '###userName###のいいところは好奇心です。新しいことに向かっていく###userName###の心構えが多くの人に魅力的に映ります。',
   '###userName###のいいところは気配りです。###userName###の配慮が多くの人を救っています。',
   '###userName###のいいところはその全てです。ありのままの###userName###自身がいいところなのです。',
-  '###userName###のいいところは自制心です。やばいと思ったときにしっかりと衝動を抑えられる###userName###が皆から評価されています。',
-]
+  '###userName###のいいところは自制心です。やばいと思ったときにしっかりと衝動を抑えられる###userName###が皆から評価されています。'
+];
 
 /**
  * 名前の文字列を渡すと診断結果を返す関数
- * @param{string}userNameユーザーの名前
- * @return{string}診断結果
+ * @param {string} userName ユーザの名前
+ * @return {string} 診断結果
  */
-function assessment(userName){
-  //全文字のコード番号の合計を回答の数で割って添字の数値を求める
-  let sumOfCharCode=0;
-  for(let i=0;i<userName.length;i++){
-    sumOfCharCode=sumOfCharCode+userName.charCodeAt(i)
+function assessment(userName) {
+  // 全文字のコード番号を取得してそれを足し合わせる
+  let sumOfCharCode = 0;
+  for (let i = 0; i < userName.length; i++) {
+    sumOfCharCode = sumOfCharCode + userName.charCodeAt(i);
   }
 
-  //文字のコード番号の合計を回答の数で割って添字の数値をの数値を求める
-  const index=sumOfCharCode%answers.length;
-  let result=answers[index];
+  // 文字のコード番号の合計を回答の数で割って添字の数値を求める
+  const index = sumOfCharCode % answers.length;
+  let result = answers[index];
 
-  result=result.replaceAll('###userName###',userName)
+  result = result.replaceAll('###userName###', userName);
   return result;
 }
 
-//テストコード
+// テストコード
 console.assert(
-  assessment('太郎')===
-  '太郎のいいところは決断力です。太郎がする決断にいつも助けられる人がいます。',
+  assessment('太郎') ===
+    '太郎のいいところは決断力です。太郎がする決断にいつも助けられる人がいます。',
   '診断結果の文言の特定の部分を名前に置き換える処理が正しくありません。'
 );
 console.assert(
-  assessment('太郎')===assessment('太郎'),
-  '入力した名前が同じなら同じ診断結果を出力する処理が正しくありません。'
+  assessment('太郎') === assessment('太郎'),
+  '入力が同じ名前なら同じ診断結果を出力する処理が正しくありません。'
 );
+
